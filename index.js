@@ -1,6 +1,16 @@
 const express = require('express')
 const app = express()
-const port = 3000
+const config = require('./config/appConfig');
+
+/*
+참고 URL: https://mongoosejs.com/docs/api/connection.html#connection_Connection
+mongoose
+*/
+const mongoose = require('mongoose');
+const { UserInfo } = require('./models/User');
+mongoose.connect(config.mongoDBURI)
+.then(() => console.log("MongoDB Connection Success!!"))
+.catch(err => console.log('mongoose Error: ', err));
 
 /*
 app.all()
@@ -12,33 +22,28 @@ app.all('/api/*', function (req, res, next) {
 });
 
 /*
+참고 URL: https://expressjs.com/ko/guide/routing.html
 route & router
 별도 router 분리
 */
 const routeUser = require("./routes/user");
 app.use("/api/routeUser", routeUser);
 
-const infoStr = `
-<br /><br />
-This is info<br /><br />
-use skill list:<br />
-nvm, node, express, route, Router()
-`;
 app.route('/info')
   .get((req, res) => {
-    res.send("route get!" + infoStr);
+    res.send("route get!" + config.infoStr);
   })
   .post((req, res) => {
-    res.send("route post!" + infoStr);
+    res.send("route post!" + config.infoStr);
   })
   .put((req, res) => {
-    res.send("route put!" + infoStr);
+    res.send("route put!" + config.infoStr);
   })
 
   app.get('/', (req, res) => {
     res.send('Hello World!')
   })
 
-app.listen(port, () => {
-  console.log(`Example app listening at http://localhost:${port}`)
+app.listen(config.expressPORT, () => {
+  console.log(`Example app listening at http://localhost:${config.expressPORT}`)
 })
